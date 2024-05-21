@@ -1,20 +1,5 @@
 #include "main.h"
 
-/**
- * A callback function for LLEMU's center button.
- *
- * When this callback is fired, it will toggle line 2 of the LCD text between
- * "I was pressed!" and nothing.
- */
-void on_center_button() {
-	static bool pressed = false;
-	pressed = !pressed;
-	if (pressed) {
-		pros::lcd::set_text(2, "I was pressed!");
-	} else {
-		pros::lcd::clear_line(2);
-	}
-}
 
 /**
  * Runs initialization code. This occurs as soon as the program is started.
@@ -22,11 +7,21 @@ void on_center_button() {
  * All other competition modes are blocked by initialize; it is recommended
  * to keep execution time for this mode under a few seconds.
  */
+// initialize function. Runs on program startup
 void initialize() {
-	pros::lcd::initialize();
-	pros::lcd::set_text(1, "Hello PROS User!");
-
-	pros::lcd::register_btn1_cb(on_center_button);
+    pros::lcd::initialize(); // initialize brain screen
+    chassis.calibrate(); // calibrate sensors
+    // print position to brain screen
+    pros::Task screen_task([&]() {
+        while (true) {
+            // print robot location to the brain screen
+            pros::lcd::print(0, "X: %f", chassis.getPose().x); // x
+            pros::lcd::print(1, "Y: %f", chassis.getPose().y); // y
+            pros::lcd::print(2, "Theta: %f", chassis.getPose().theta); // heading
+            // delay to save resources
+            pros::delay(20);
+        }
+    });
 }
 
 /**
@@ -74,43 +69,9 @@ void autonomous() {}
  * task, not resume it from where it left off.
  */
 void opcontrol() {
-	pros::Controller master(pros::E_CONTROLLER_MASTER);
-	pros::Motor liftMotor(2);
-	pros::ADIAnalogIn limitSwitch('A');
-	//this is what
-	int liftState = 0;
+	
 	while (true) {
 		
-		//bool limitPressed = limitSwitch.get_value() > 20;
-		if(limitSwitch.get_value() < 20 && liftState == 0){
-			//initialize
-			pros::delay(300);
-			liftState = 1;
-       //liftMotor.move_relative(-1, 10000);
-		}
-		else if(limitSwitch.get_value() < 20 && liftState == 1){
-			//go up
-			liftMotor.move_velocity(2000);
-			pros::delay(2000);
-			liftMotor.move_voltage(0);
-			liftState = 2;
-			pros::delay(2000);
-       //liftMotor.move_relative(-1, 10000);
-		}
-		else if(limitSwitch.get_value() < 20 && liftState == 2){
-			//go down
-			liftMotor.move_velocity(-2000);
-			pros::delay(2000);
-			liftMotor.move_voltage(0);
-			liftState = 0;
-			pros::delay(2000);
-       //liftMotor.move_relative(-1, 10000);
-		}
-		else if (limitSwitch.get_value() > 20) {
-			// liftMotor.move_relative(-.25, 10000	);
-			liftMotor.move_voltage(0);
-		}
-		// liftMotor.tare_position();
 		pros::delay(20);
 	}
 }
