@@ -1,10 +1,27 @@
 #include "main.h"
 
+//drivetrain
+//left drive
+pros::Motor leftMotor1(1);
+pros::Motor leftMotor2(2);
+pros::Motor leftMotor3(3);
+//right drive
+pros::Motor rightMotor1(4);
+pros::Motor rightMotor2(5);
+pros::Motor rightMotor3(6);
+
 
 // left motor group
-pros::MotorGroup left_motor_group({-1, -2, -3}, pros::MotorGears::blue);
+pros::MotorGroup left_motor_group({leftMotor1, leftMotor2, leftMotor3}, pros::MotorGears::blue);
 // right motor group
-pros::MotorGroup right_motor_group({4, 5, 6}, pros::MotorGears::blue);
+pros::MotorGroup right_motor_group({rightMotor1, rightMotor2, rightMotor3}, pros::MotorGears::blue);
+// imu
+pros::Imu imu(10);
+// horizontal tracking wheel encoder
+pros::Rotation horizontal_encoder(20);
+// vertical tracking wheel encoder
+pros::adi::Encoder vertical_encoder('C', 'D', true);
+
 
 // drivetrain settings
 lemlib::Drivetrain drivetrain(&left_motor_group, // left motor group
@@ -15,12 +32,7 @@ lemlib::Drivetrain drivetrain(&left_motor_group, // left motor group
                               2 // horizontal drift is 2 (for now)
 );
 
-// imu
-pros::Imu imu(10);
-// horizontal tracking wheel encoder
-pros::Rotation horizontal_encoder(20);
-// vertical tracking wheel encoder
-pros::adi::Encoder vertical_encoder('C', 'D', true);
+
 
 
 
@@ -68,4 +80,6 @@ lemlib::Chassis chassis(drivetrain, // drivetrain settings
                         angular_controller, // angular PID settings
                         sensors // odometry sensors
 );
+
+
 
