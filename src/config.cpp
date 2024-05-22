@@ -12,9 +12,9 @@ pros::Motor rightMotor3(6);
 
 
 // left motor group
-pros::MotorGroup left_motor_group({leftMotor1, leftMotor2, leftMotor3}, pros::MotorGears::blue);
+pros::MotorGroup left_motor_group({1,2,3}, pros::MotorGears::blue);
 // right motor group
-pros::MotorGroup right_motor_group({rightMotor1, rightMotor2, rightMotor3}, pros::MotorGears::blue);
+pros::MotorGroup right_motor_group({-4,-5,-6}, pros::MotorGears::blue);
 // imu
 pros::Imu imu(10);
 // horizontal tracking wheel encoder
